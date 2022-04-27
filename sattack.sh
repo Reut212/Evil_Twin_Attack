@@ -58,7 +58,7 @@ fi
 
 clear
 # Perform a WLAN scan for 1 minute and print the BSSID and channel lines to the screen
-iwlist $interface scanner | grep -i bssid  | awk '{print $1, $4}' 
+iwlist $interface scanning | grep -i bssid  | awk '{print $1, $4}' 
 
 
 
