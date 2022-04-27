@@ -54,7 +54,7 @@ else
 fi
 
 
-clear
+
 
 # Perform a WLAN scan for 1 minute
 echo "Scanning for WLAN networks..."
@@ -84,11 +84,10 @@ else
 fi
 
 
-clear
 
 echo "Enter the BSSID of the access point you want to attack"
 read assid
-
+clear
 
 # Exit if BSSID is not valid
 if [ -z "$assid" ]
