@@ -58,7 +58,7 @@ clear
 
 # Perform a WLAN scan for 1 minute
 echo "Scanning for WLAN networks..."
-iwlist $interface scan 1
+iwlist $interface scanning 1
 
 
 
