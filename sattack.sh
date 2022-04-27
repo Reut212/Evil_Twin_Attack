@@ -56,11 +56,12 @@ fi
 
 
 
+clear
 # Perform a WLAN scan for 1 minute and print the BSSID and channel
-echo "Scanning for WLANs..."
-iwlist $interface scan | grep -i bssid | awk '{print $0 ,$1,$2,$3,$4,$5,$6,$7, $8}' 
-
-
+iwlist $interface scan | grep 'Address:' | awk '{print $4}' | while read line ; do
+    echo "BSSID: $line"
+    iwlist $interface scan | grep $line | awk '{print $2}'
+done
 
 
 # Check if interface is in monitor mode
