@@ -58,20 +58,7 @@ fi
 
 clear
 # Perform a WLAN scan for 1 minute and print the BSSID and channel
-iwlist $interface scan | grep 'Address:' | awk '{print $4}' | cut -d ':' -f2 | sort -u | while read bssid ; do
-    iw dev $interface scan | grep $bssid | grep -i 'signal level' | awk '{print $3}' | cut -d '=' -f2 | cut -d '/' -f1 | while read signal ; do
-        iw dev $interface scan | grep $bssid | grep -i 'signal level' | awk '{print $3}' | cut -d '=' -f2 | cut -d '/' -f2 | while read noise ; do
-            iw dev $interface scan | grep $bssid | grep -i 'signal level' | awk '{print $3}' | cut -d '=' -f2 | cut -d '/' -f3 | while read quality ; do
-                echo "BSSID: $bssid"
-                echo "Signal: $signal"
-                echo "Noise: $noise"
-                echo "Quality: $quality"
-                echo "Channel: $channel"
-                echo "----------------------------------------"
-            done
-        done
-    done
-done
+iwlist $interface scan | grep 'Address:' | awk '{print $2, $4}'
 
 
 # Check if interface is in monitor mode
