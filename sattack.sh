@@ -56,9 +56,10 @@ fi
 
 
 
-# Perform a WLAN scan for 1 minute
-echo "Scanning for WLAN networks..."
-iwlist $interface scanning | grep ESSID
+# Perform a WLAN scan for 1 minute and print the BSSID and channel
+echo "Scanning for WLANs..."
+iwlist $interface scan | grep -i bssid | awk '{print $1, $4}' 
+
 
 
 
