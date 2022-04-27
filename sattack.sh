@@ -32,6 +32,36 @@ fi
 
 clear
 
+# Check if interface is in managed mode
+iwconfig $interface | grep Managed
+if [ $? -eq 0 ]
+then
+    echo "Interface is in managed mode"
+else
+    echo "Interface is not in managed mode"
+    
+    # Start monitor mode
+    ifconfig $interface down
+    iwconfig $interface mode managed
+    ifconfig $interface up
+    if [ $? -eq 0 ]
+    then
+        echo "Managed mode started"
+    else
+        echo "Managed mode failed to start"
+        exit
+    fi
+fi
+
+
+clear
+
+# Perform a WLAN scan for 1 minute
+echo "Scanning for WLAN networks..."
+iwlist $interface scanning 1 | grep ESSID
+
+
+
 # Check if interface is in monitor mode
 iwconfig $interface | grep Monitor
 if [ $? -eq 0 ]
@@ -55,12 +85,6 @@ fi
 
 
 clear
-
-# Perform a WLAN scan for 1 minute
-echo "Scanning for WLAN networks..."
-iwlist $interface scanning 1
-
-
 
 echo "Enter the BSSID of the access point you want to attack"
 read assid
