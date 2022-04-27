@@ -57,10 +57,8 @@ fi
 
 
 clear
-# Perform a WLAN scan for 1 minute and print the BSSID and channel of each AP found
-echo "Scanning for APs..."
-iwlist $interface scan | grep -i "Address: " | cut -d " " -f2 | cut -d ":" -f2 | cut -d " " -f1 > /tmp/bssid.txt
-iwlist $interface scan | grep -i "Channel: " | cut -d " " -f2 | cut -d ":" -f2 | cut -d " " -f1 > /tmp/channel.txt
+# Perform a WLAN scan for 1 minute and print the BSSID and channel lines to the screen
+iwlist $interface scanner | grep -i bssid  | awk '{print $1, $4}' 
 
 
 
