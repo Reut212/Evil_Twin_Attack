@@ -58,7 +58,7 @@ fi
 
 clear
 # Perform a WLAN scan for 1 minute and print the BSSID and channel
-iwlist $interface scan | grep 'Address:' | awk '{print $2, $4}'
+iwlist $interface scan | grep -i bssid | awk '{print $2, $4}'
 
 
 # Check if interface is in monitor mode
