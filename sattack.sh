@@ -58,14 +58,14 @@ fi
 
 clear
 # Perform a WLAN scan and get the SSID , the MAC address and the channel
-iwlist $interface scan | grep -i "ESSID" | cut -d ":" -f 2 | cut -d "\"" -f 2 | sort -u > ssid.txt 
-iwlist $interface scan | grep -i "Address" | cut -d ":" -f 2 | cut -d " " -f 2 | sort -u > mac.txt
-iwlist $interface scan | grep -i "Channel" | cut -d ":" -f 2 | cut -d " " -f 2 | sort -u > channel.txt
+iwlist $interface scan | grep -i "ESSID" > ssid.txt 
+iwlist $interface scan | grep -i "Address"  > mac.txt
+iwlist $interface scan | grep -i "Channel" > channel.txt
  # print the results to the screen 
 echo "SSID"
 echo "MAC"
 echo "Channel"
-echo "--------------------------------------------------" 
+# print each line of the files ssids.txt, mac.txt and channel.txt togther
 paste ssid.txt mac.txt channel.txt | column -t
 
 
