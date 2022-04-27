@@ -58,7 +58,7 @@ fi
 
 # Perform a WLAN scan for 1 minute
 echo "Scanning for WLAN networks..."
-iwlist $interface scanning 1 | grep ESSID
+iwlist $interface scanning | grep ESSID
 
 
 
