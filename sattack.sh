@@ -57,8 +57,11 @@ fi
 
 
 clear
-# Perform a WLAN scan for 1 minute and print the BSSID and channel
-iwlist $interface scan | grep -i bssid | awk '{print $2, $4}'
+# Perform a WLAN scan for 1 minute and print the BSSID and channel of each AP found
+echo "Scanning for APs..."
+iwlist $interface scan | grep -i "Address: " | cut -d " " -f2 | cut -d ":" -f2 | cut -d " " -f1 > /tmp/bssid.txt
+iwlist $interface scan | grep -i "Channel: " | cut -d " " -f2 | cut -d ":" -f2 | cut -d " " -f1 > /tmp/channel.txt
+
 
 
 # Check if interface is in monitor mode
