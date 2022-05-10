@@ -62,7 +62,7 @@ clear
 
 
 
-python3 sattack.py $interface
+python3 pattack.py $interface
 # # Perform a WLAN scan and get the SSID , the MAC address and the channel
 # iwlist $interface scan | grep -i "ESSID" > ssid.txt 
 # iwlist $interface scan | grep -i "Address"  > mac.txt
