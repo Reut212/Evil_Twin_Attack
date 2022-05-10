@@ -77,7 +77,7 @@ def deauth(interface,accessPointBSSID,clientMAC):
 
 
 if __name__ == "__main__":
-    interface = int(sys.argv[1])
+    interface = sys.argv[1]
     accessPointBSSID = scanWLAN(interface)
     # If accessPointBSSID is empty, print an error message and exit the script
     if accessPointBSSID == []:
