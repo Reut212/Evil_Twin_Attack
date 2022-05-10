@@ -79,9 +79,16 @@ def deauth(interface,accessPointBSSID,clientMAC):
 if __name__ == "__main__":
     interface = int(sys.argv[1])
     accessPointBSSID = scanWLAN(interface)
+    # If accessPointBSSID is empty, print an error message and exit the script
+    if accessPointBSSID == []:
+        print("No access points found.")
+        sys.exit(1)
     # print the access points BSSID
     getValidInput(accessPointBSSID, "\nEnter the access point BSSID:\n")
     clientsMAC= scanConnecedToAP(interface,accessPointBSSID)
+    if clientsMAC == []:
+        print("No clients connected to the access point were found.")
+        sys.exit(1)
     # print the clients MAC addresses
     print("[+] Clients MAC addresses: " + str(clientsMAC))
     getValidInput(clientsMAC, "Enter the client MAC address:\n")
@@ -89,7 +96,7 @@ if __name__ == "__main__":
     deauth(interface,accessPointBSSID,clientMAC)
     # print the deauthentication attack has been performed
     print("\nDeauthentication attack has been performed.\n")
-    
+
 
 
 
