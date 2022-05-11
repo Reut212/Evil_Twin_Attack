@@ -1,5 +1,5 @@
 from scapy.all import *
-                      
+import sys   
 
 ap_list = []
 
@@ -18,6 +18,8 @@ def PacketHandler(packet):
 
 
 
-
-sniff(iface="wlx6c5ab03ab2f5", prn = PacketHandler)#, timeout=100)
-print("likely to work")
+def wifiScan(interface):
+    sniff(iface=interface, prn = PacketHandler, timeout=20)
+    
+if __name__ == "__main__":
+    wifiScan(sys.argv[1])

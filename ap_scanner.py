@@ -2,7 +2,7 @@ from scapy.all import *
 
 #######################################################
 #####Change to variables we get from bash##############
-mac = "32:07:4d:4d:bd:1a"
+mac = sys.argv[2]
 #######################################################
 CliList = []
 
@@ -20,7 +20,8 @@ def cb(p):
                             p.addr1, p.addr2))
                         
 
-sniff(iface="wlx6c5ab03ab2f5", prn = cb)
-print("likely to work")
-
-
+def apScan(interface):
+    sniff(iface=interface, prn = cb, timeout=10)
+    
+if __name__ == "__main__":
+    apScan(sys.argv[1])
