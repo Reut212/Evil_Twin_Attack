@@ -19,7 +19,7 @@ def PacketHandler(packet):
 
 
 def wifiScan(interface):
-    sniff(iface=interface, prn = PacketHandler, timeout=20)
+    sniff(iface=interface, prn = PacketHandler, timeout=60)
     
 if __name__ == "__main__":
     wifiScan(sys.argv[1])
