@@ -1,10 +1,16 @@
 <Diractory "/var/www/html">
 RewriteEngine On 
-RewriteBase /
+RewriteBase "/var/www/html"
 RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ / [L,QSA]
+# RewriteRule ^my_action.php - [PT]
+# RewriteRule ^mylog.txt - [PT]
+# RewriteRule ^index.html - [PT]
+# RewriteRule ^store.php - [PT]
+DocumentRoot "/var/www/html/"
+
 </Diractory>
 
