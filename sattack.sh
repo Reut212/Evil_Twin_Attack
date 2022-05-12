@@ -87,25 +87,26 @@ fi
 
 python3 wifi_scanner.py $interface
 
-echo "Enter the BSSID of the access point you want to attack"
-read assid
-# clear
+# echo "Enter the BSSID of the access point you want to attack"
+# read assid
+# # clear
 
-# Exit if BSSID is not valid
-if [ -z "$assid" ]
-then
-    echo "BSSID is not valid"
-    exit
-fi
+# # Exit if BSSID is not valid
+# if [ -z "$assid" ]
+# then
+#     echo "BSSID is not valid"
+#     exit
+# fi
 
-# get the ssid of the assid
-iwlist $interface scan | grep -i "$assid" | awk '{print $1}' > ssid.txt
+# get the assid of the assid.txt
+assid=$(cat assid.txt)
+rm assid.txt
+
+# get the ssid of the ssid.txt
 ssid=$(cat ssid.txt)
 rm ssid.txt
 
-
-# get the channel of the assid
-iwlist $interface scan | grep -i "$assid" | awk '{print $4}' > channel.txt
+# get the channel of the channel.txt
 channel=$(cat channel.txt)
 rm channel.txt
 
