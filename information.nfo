@@ -1,0 +1,30 @@
+
+  ___        __                            _   _               
+ |_ _|_ __  / _| ___  _ __ _ __ ___   __ _| |_(_) ___  _ __  _ 
+  | || '_ \| |_ / _ \| '__| '_ ` _ \ / _` | __| |/ _ \| '_ \(_)
+  | || | | |  _| (_) | |  | | | | | | (_| | |_| | (_) | | | |_ 
+ |___|_| |_|_|  \___/|_|  |_| |_| |_|\__,_|\__|_|\___/|_| |_(_)
+                                        
+
+Run via sattack										
+
+Our ID's:
+
+- Victor Kushnir 208629477
+- Aviv Danino 209237544
+- Reut Hadad 305170219
+
+
+Our Personal Review:
+
+To be honest, it wasn't really a complicated task.
+Don't get me wrong there were things that took a few hours and even days to solve,
+but mainly the logic was (sort of) clear. Many bugs were caused by the OS reason ( like threads, memory sync, etc.),
+so when this project should have been committed, it very likely won't work. 
+It's not that we didn't try or didn't take it seriously it's just the enormous amount of weird errors
+that none of us has ever seen in our lives ( and some of us use Linux by default for 1-2 years already ).
+We've tried to add as much documentation to the code so those who will look at it will hopefully see that even if it doesn't work as it should,
+we've tried to do what we could.
+
+If you've read till here, first thank you, and secondly, please don't lower our grade too much.
+

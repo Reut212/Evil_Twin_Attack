@@ -1,4 +1,0 @@
-sometime host apd do not die so we need
-$ sudo ps -a
-$ kill -9 [pid number]
-## for hostapd we kill his parent bash
