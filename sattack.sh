@@ -159,7 +159,7 @@ echo "Starting fake access point"
 
 # Run in new thread the hostapd.sh script
 sudo sh hostapd.sh & 
-sudo sh dnsmasq.sh &
+sudo sh dnsmasq.sh $interface &
 wait
 
 
