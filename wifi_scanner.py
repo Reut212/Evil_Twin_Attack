@@ -41,3 +41,4 @@ if __name__ == "__main__":
                 file3.write(str(int(ord(packet[Dot11Elt:3].info))))
             sys.exit(0)
     print("Wrong MAC address")
+
